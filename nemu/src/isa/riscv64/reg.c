@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include "local-include/reg.h"
-
+#include "string.h"
 const char *regs[] = {
   "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
   "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -24,8 +24,14 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+    for (int i = 0; i < 32; ++i) {
+//        printf("%s %s",regs[i],isa_reg_str2val(regs[i],false));
+        printf("%-3s :0x%08lx |  \n", regs[i], cpu.gpr[i]);
+    }
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
+//   this function extent the reg.h use gpr array to get register's value
+
   return 0;
 }

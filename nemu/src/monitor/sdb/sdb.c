@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/vaddr.h>
 
 static int is_batch_mode = false;
 
@@ -43,6 +44,7 @@ static char* rl_gets() {
 }
 
 static int cmd_c(char *args) {
+//    -1是65535最大的2的64-1
   cpu_exec(-1);
   return 0;
 }
@@ -53,7 +55,33 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
+static int cmd_si(char *args);
+static int cmd_x(char *args){
+    /* get N info,with the start of exp*/
+    /*
+     * vaddr_read(addr,len),这个len是长度的意思，单位是byte，一条指令默认4B，所以取的4
+     */
+    char *arg= strtok(NULL, " ");
 
+
+    int N=atoi(arg);
+
+
+    paddr_t exprs=0x80000000;
+    printf("0x%08x",exprs);
+
+
+
+
+    printf("Address    Dword block ... Byte sequence\n");
+
+    for(int i=0;i<N;i++){
+      
+        printf("0x%8x  0x%08lx\n",exprs + i*4,vaddr_read(exprs + i * 4,4));
+    }
+    return 0;
+}
+static int cmd_info(char *args);
 static struct {
   const char *name;
   const char *description;
@@ -62,6 +90,9 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  {"si"," exect next n steps ",cmd_si},
+  {"info","print register",cmd_info},
+  {"x","output the expr in N word",cmd_x}
 
   /* TODO: Add more commands */
 
@@ -90,6 +121,33 @@ static int cmd_help(char *args) {
     printf("Unknown command '%s'\n", arg);
   }
   return 0;
+}
+static int cmd_si(char *args){
+    /* extract the first argument */
+    /*get steps,default is 1*/
+    char *arg = strtok(NULL, " ");
+    int i=1;
+    if(arg==NULL){
+        /* no argument given */
+        i=1;
+    }else{
+        i=0;
+        for(int j=0;j< strlen(arg);j++){
+            i=i*10+arg[j]-'0';
+        }
+    }
+//    printf("%s",arg);
+    cpu_exec(i);
+    return 0;
+}
+static int cmd_info(char *args){
+    /*print the register*/
+    /*just add print register*/
+    char *arg = strtok(NULL, " ");
+    if(strcmp(arg,"r")==0){
+        isa_reg_display();
+    }
+    return 0;
 }
 
 void sdb_set_batch_mode() {
