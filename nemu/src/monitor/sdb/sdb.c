@@ -68,15 +68,15 @@ static int cmd_x(char *args){
 
 
     paddr_t exprs=0x80000000;
-    printf("0x%08x",exprs);
+//    printf("0x%08x",exprs);
 
 
 
 
-    printf("Address    Dword block ... Byte sequence\n");
+//    printf("Address    Dword block ... Byte sequence\n");
 
     for(int i=0;i<N;i++){
-      
+
         printf("0x%8x  0x%08lx\n",exprs + i*4,vaddr_read(exprs + i * 4,4));
     }
     return 0;
