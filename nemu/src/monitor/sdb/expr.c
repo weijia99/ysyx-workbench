@@ -20,25 +20,47 @@
  */
 #include <regex.h>
 
+//this is pa1.2,you should add regex&token
+//using Inverse Poland to calculate the answer
 enum {
-  TK_NOTYPE = 256, TK_EQ,
+  TK_NOTYPE = 256, TK_EQ,TK_REG,TK_NUMS,AND,OR,NE,HEX,POINT
 
   /* TODO: Add more token types */
-
+//32长度的reg,在riscv里面定义的寄存器
 };
 
 static struct rule {
   const char *regex;
   int token_type;
 } rules[] = {
-
+//    这里是写具体的正则样式
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
+  {" +", TK_NOTYPE},    // spaces,这个就是正则,表示空格+
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
+  {"!=",NE},
+  {"\\*",'*'},
+  {"/",'/'},
+  {"-",'-'},
+  {"!", '!'},
+  {"\\(", '('},
+  {"\\)", ')'},
+  {"&&",AND},
+  {"\\|\\|",OR},
+  {"[0-9]+",TK_NUMS},
+  {"0x[0-9a-fA-F]+",HEX},
+  {"\\$0",TK_REG},
+  {"\\$ra",TK_REG},
+  {"\\$[sgt]p",TK_REG},
+  {"\\$t[0-6]",TK_REG},
+  {"\\$[as][0-7]",TK_REG},
+  {"\\$[s][1][0-1]",TK_REG},
+  {"\\$[s][8-9]",TK_REG},
+  {"\\*\\(.*\\)",POINT}
+
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -88,14 +110,23 @@ static bool make_token(char *e) {
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
-
+        //加入到tokens数组
         /* TODO: Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
+        
+        //空格跳过,其余的加入
         switch (rules[i].token_type) {
-          default: TODO();
+            case TK_NOTYPE:
+                break;
+          default:
+              for(int i=0;i<substr_len;i++){
+                  tokens[nr_token].str[i]=substr_start[i];
+              }
+              tokens[nr_token].type=rules[i].token_type;
+              nr_token++;
+                break;
         }
 
         break;

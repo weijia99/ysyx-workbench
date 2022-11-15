@@ -82,6 +82,10 @@ static int cmd_x(char *args){
     return 0;
 }
 static int cmd_info(char *args);
+static int cmd_p(char *args){
+//    todo:using expression to calculate the answer
+    return 0;
+}
 static struct {
   const char *name;
   const char *description;
@@ -92,7 +96,8 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   {"si"," exect next n steps ",cmd_si},
   {"info","print register",cmd_info},
-  {"x","output the expr in N word",cmd_x}
+  {"x","output the expr in N word",cmd_x},
+  {"p","output expression",cmd_p};
 
   /* TODO: Add more commands */
 
